@@ -1,0 +1,1806 @@
+{
+  "name": "My workflow 25",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "whatsapp_catalog",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        96,
+        1104
+      ],
+      "id": "7e1d08a9-406d-4afa-9c63-3e2129e47ead",
+      "name": "Whatsapp Bot Webhook",
+      "webhookId": "2b7f85b2-f581-46d9-8d22-172f7a9933c0"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query[\"hub.challenge\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        544,
+        1008
+      ],
+      "id": "4918165f-89b7-4328-9ddd-3bb188dbb4c1",
+      "name": "Verify Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "51696ba9-54b9-4f8c-bd0c-4e11fcb50d45",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "4b041959-0ee0-4db3-8465-d08554bdec80",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "hello",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        1008
+      ],
+      "id": "a4a63b3e-428f-4a60-8bf6-445e318a7dfb",
+      "name": "Check webhook configure parameter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24009ed9-9dd8-4b22-9e15-ef5b4e0b1587",
+              "name": "msg_from",
+              "value": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.metadata.display_phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "2977f9b0-5df4-4d94-93a7-308724b31769",
+              "name": "msg",
+              "value": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "14d7554a-9415-4478-b26c-59d88b63d498",
+              "name": "user_name",
+              "value": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.contacts[0].profile.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        1392
+      ],
+      "id": "fd55afff-757e-4c6e-a9f1-818af5e9ccd8",
+      "name": "Set Variable"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $('Set Variable3').item.json.msg_to }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"body\": {\n      \"text\": \"Hi {{ $json.user_name }} 👋 \\nWelcome to Alister Bharat! You can:\"\n    },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"browse_product\",\n            \"title\": \"Browse Product\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"order_status\",\n            \"title\": \"Order Status\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"ask_faq\",\n            \"title\": \"Ask FAQs\"\n          }\n        }\n      ]\n    }\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1216,
+        1392
+      ],
+      "id": "3a7e0d5f-5695-404b-9664-8a7b09482ed8",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "897fa65a-47b7-4e25-b472-6f72bfc1d1c5",
+              "leftValue": "={{ $json.body.entry[0].changes[0].value.statuses[0].status }}",
+              "rightValue": "read",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        1200
+      ],
+      "id": "84a760ad-5e86-460a-b565-2c90776ba2cb",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b9ce7a61-a4ac-410d-a657-cc2043987041",
+                    "leftValue": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.messages[0].interactive.button_reply.id }}",
+                    "rightValue": "confirm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Confirm Order"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fe1e27ee-c64f-4431-95f9-bc69d2b64f40",
+                    "leftValue": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.messages[0].interactive.button_reply.id }}",
+                    "rightValue": "order_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fa8a5bb5-2908-4bee-b7f7-b7d6cd329182",
+                    "leftValue": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.messages[0].interactive.button_reply.id }}",
+                    "rightValue": "ask_faq",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ask FAQs"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1ac966a0-815a-4c1b-9c9c-2af2834b903f",
+                    "leftValue": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.messages[0].interactive.button_reply.id }}",
+                    "rightValue": "cancel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancel Order"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.messages[0].interactive.button_reply.id }}",
+                    "rightValue": "browse_product",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a7c6ca04-7747-406d-ab76-cd29c0e07c09"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Browse Product"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1216,
+        576
+      ],
+      "id": "751a4130-4744-420c-867c-e5f85b91fc90",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.messages[0].interactive.type }}",
+                    "rightValue": "button_reply",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "66f96ae4-4402-4323-8b49-2f569e97fbf3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Button Reply"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        992,
+        624
+      ],
+      "id": "4cd10f8f-6459-4e89-b19b-31e1952aed5b",
+      "name": "Interative Type Route"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU",
+          "mode": "list",
+          "cachedResultName": "catalog_products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1401568257,
+          "mode": "list",
+          "cachedResultName": "demo sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit#gid=1401568257"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2336,
+        1040
+      ],
+      "id": "1dd85e5f-3ab0-4cec-8a84-8a35894fad31",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert Excel rows → PROPER JSON array ready for Twilio\nconst MAX_ITEMS = 10;\n  const TITLE_MAX = 24;\nconst DESC_MAX = 72;\n\nconst rows = $input.all().map(i => i.json);\n\nfunction trunc(s,n){ \n  if (!s) return \"\"; \n  s = String(s); \n  return s.length<=n ? s : s.slice(0,n-1)+\"…\"; \n}\n\n// Order by in-stock first\nconst inStock = rows.filter(r => (r.availability || '').toLowerCase() === 'in stock');\nconst others   = rows.filter(r => !inStock.includes(r));\nconst ordered  = inStock.concat(others).slice(0, MAX_ITEMS);\n\n// Build Twilio List Picker items\nconst listItems = ordered.map(p => {\n  const id = String(p.id);\n  const title = trunc(p.title, TITLE_MAX);\n  const description = trunc(p.description ?? `₹${p.price} • ${p.availability}`, DESC_MAX);\n  return {\n    product_retailer_id: id\n  };\n});\n\n// Return BOTH versions:\n// 1. Normal JSON array\n// 2. Stringified JSON array (for display)\nreturn [{\n  json: {\n    items: listItems,\n    items_stringified: JSON.stringify(listItems, null, 2)\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        1040
+      ],
+      "id": "c4e0d2f2-69d9-4ae7-99ac-e44c5e6d199d",
+      "name": "mapping_item1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "68570869-8bb5-49d3-9802-4428aac4dab9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v24.0/924412964080974/business_compliance_info",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"entity_name\": \"Lakshit Ukani\",\n  \"entity_type\": \"SOLE_PROPRIETORSHIP\",\n  \"entity_registration_number\": \"AEEUU5907L\",\n  \"business_address\": {\n    \"street\": \"Mira road\",\n    \"city\": \"Thane\",\n    \"state\": \"Maharashtra\",\n    \"postal_code\": \"401107\",\n    \"country\": \"IN\"\n  },\n  \"customer_care_details\": {\n    \"email\": \"laksh77@gmail.com\",\n    \"mobile_number\": \"+918163328947\"\n  },\n  \"grievance_officer_details\": {\n    \"name\": \"Lakshit Ukani\",\n    \"email\": \"laksh77@gmail.com\",\n    \"mobile_number\": \"+918122228947\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        192,
+        0
+      ],
+      "id": "8976251c-0c79-466a-b384-b1885ab77793",
+      "name": "Compliance Info Post",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://graph.facebook.com/v24.0/924412964080974/business_compliance_info",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "27e927f3-4966-4616-ab07-3f5b47ece82d",
+      "name": "Compliance Info Get",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v24.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $items('Set Variable3')[0].json.msg_to }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"product_list\",\n    \"header\": {\n      \"type\": \"text\",\n      \"text\": \"Baby Care Products\"\n    },\n    \"body\": {\n      \"text\": \"Check out our premium baby care collection\"\n    },\n    \"footer\": {\n      \"text\": \"Best prices guaranteed\"\n    },\n    \"action\": {\n      \"catalog_id\": \"896416602722897\",\n      \"sections\": [\n        {\n          \"title\": \"Diapers & Care\",\n          \"product_items\": \n            {{ JSON.stringify($json.items) }}\n        }\n      ]\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2816,
+        1024
+      ],
+      "id": "e9e0c62d-ff56-43a1-a2ec-45065e6a1a28",
+      "name": "Send Multi Product Template",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.messages[0].type }}",
+                    "rightValue": "interactive",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "38c2ee1e-5380-4c4c-906a-765cd35fff09"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Interactive"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7bb670b9-8110-4d70-a382-9581cd025551",
+                    "leftValue": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.messages[0].type }}",
+                    "rightValue": "order",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Order"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "73114ba1-f1c6-4eb8-8f92-f9abf6d6cb29",
+                    "leftValue": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.messages[0].type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        768,
+        1184
+      ],
+      "id": "4619c0b7-7412-4f90-9a9b-be65455130fe",
+      "name": "Message Type Routing"
+    },
+    {
+      "parameters": {
+        "content": "# Compliance Check for India",
+        "height": 304,
+        "width": 704
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -128
+      ],
+      "id": "9d123690-f21f-4a48-bd5a-ea3ce8cb0e42",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU",
+          "mode": "list",
+          "cachedResultName": "catalog_products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1401568257,
+          "mode": "list",
+          "cachedResultName": "demo sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit#gid=1401568257"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1216,
+        1200
+      ],
+      "id": "224f7a9d-54cc-4c00-a312-64d4aadb27e9",
+      "name": "Get Stock data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input 1 = WhatsApp webhook\n// Input 2 = Excel data\n\n// FIX 1: unwrap Excel rows from .all() → each item is { json: { ... } }\nconst excelData = $('Get Stock data').all().map(item => item.json);\n\n// Extract all product_items from WhatsApp order\nconst productItems = $('Whatsapp Bot Webhook').first().json.body.entry[0].changes[0].value.messages[0].order.product_items\n\n// Collect errors\nlet errors = [];\n\nfor (const item of productItems) {\n  const selectedId = String(item.product_retailer_id).trim();\n  const selectedQty = Number(item.quantity);\n\n  // FIX 2: normalize Excel IDs to string\n  const match = excelData.find(p => String(p.id).trim() === selectedId);\n\n  if (!match) {\n    errors.push(`Product with ID ${selectedId} not found.`);\n    continue;\n  }\n\n  const available = Number(match.item_available);\n\n  if (available < selectedQty) {\n    errors.push(\n      `Only ${available} item(s) of \"${match.title}\" are available, but you selected ${selectedQty}.`\n    );\n  }\n}\n\n// FINAL DECISION\nif (errors.length === 0) {\n  return [\n    {\n      json: {\n        success: true,\n        message: \"Stock available for all selected items.\"\n      }\n    }\n  ];\n} else {\n  return [\n    {\n      json: {\n        success: false,\n        message: errors.join(\" | \")\n      }\n    }\n  ];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        1200
+      ],
+      "id": "12e6d2da-fa87-46c4-84c7-72da1693e07e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd52bbe8-7f92-4efe-8416-0d8d14246800",
+              "name": "=msg_to_send",
+              "value": "=Thanks for your order! 😄\nI checked the availability and here’s an update:\n\nSome items are currently not available in the quantity you selected:\n\n👉 {{$json.message.replace(/\\|/g, \"\\n👉 \")}}\n\nYou can update the quantities and let me know — I’ll place the order immediately for you!;",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1888,
+        1104
+      ],
+      "id": "3f2694a8-237a-424d-927c-ab5fe22bda4a",
+      "name": "Error message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "018b7715-2bfd-48f9-b1da-63fb9b6209f0",
+              "name": "msg_to_send",
+              "value": "=Hey! 😊\nI checked the items you added to your cart.\n\nGood news: Everything you selected is in stock and ready to go!\nPlease confirm your order to continue.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1888,
+        1296
+      ],
+      "id": "770e1ce5-e3e4-40fe-9fc7-e074bf63a8b9",
+      "name": "Succes Msg"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $node['Set Variable3'].json.msg_to }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"{{ $json.msg_to_send.replace(/\\n/g, '\\\\n').replace(/\"/g, \"'\") }}\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2112,
+        1104
+      ],
+      "id": "5bc6aebb-c35e-4fd2-ba00-689f076ffb62",
+      "name": "Send msg",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba2ea282-f5f0-4215-8cfc-eb3d30f46dfd",
+              "name": "catalog_id",
+              "value": "896416602722897",
+              "type": "string"
+            },
+            {
+              "id": "374ced34-cfa5-4dd1-a21b-3e73d722d2d3",
+              "name": "msg_to",
+              "value": "={{ $json.body.entry[0].changes[0].value.contacts[0].wa_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        1200
+      ],
+      "id": "18f857c3-7279-404f-8185-3f96c5445a8d",
+      "name": "Set Variable2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba2ea282-f5f0-4215-8cfc-eb3d30f46dfd",
+              "name": "catalog_id",
+              "value": "896416602722897",
+              "type": "string"
+            },
+            {
+              "id": "374ced34-cfa5-4dd1-a21b-3e73d722d2d3",
+              "name": "msg_to",
+              "value": "={{ $json.body.entry[0].changes[0].value.contacts[0].wa_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        1200
+      ],
+      "id": "6db58fd6-663a-4f44-9463-bf4ef2850a99",
+      "name": "Set Variable3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $items('Set Variable3')[0].json.msg_to }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"body\": {\n      \"text\": \"{{ $('Succes Msg').item.json.msg_to_send.replace(/\\n/g, '\\\\n').replace(/\"/g, \"'\") }}\"\n    },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"{{ $('Edit Fields1').item.json.unique_id_of_order }}_confirm\",\n            \"title\": \"Confirm\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"{{ $('Edit Fields1').item.json.unique_id_of_order }}_cancel\",\n            \"title\": \"Cancel\"\n          }\n        }\n      ]\n    }\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3232,
+        1296
+      ],
+      "id": "78da07fd-886e-4082-ba21-bd77226b44aa",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "htaS8wafCR4Eh7v5",
+          "mode": "list",
+          "cachedResultName": "Alister Order Stage",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/htaS8wafCR4Eh7v5"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_no": "={{ $('Edit Fields1').item.json.user_phone_no }}",
+            "unique_order_id": "={{ $('Edit Fields1').item.json.unique_id_of_order }}",
+            "user_name": "={{ $('Edit Fields1').item.json.user_name }}",
+            "product_id": "={{ $json.product_retailer_id }}",
+            "product_quantity": "={{ $json.quantity }}",
+            "product_title": "={{ $json.title }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "unique_order_id",
+              "displayName": "unique_order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "user_name",
+              "displayName": "user_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone_no",
+              "displayName": "phone_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "product_id",
+              "displayName": "product_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "product_title",
+              "displayName": "product_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "product_quantity",
+              "displayName": "product_quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        1296
+      ],
+      "id": "c19acfe1-f0e1-49f9-b61c-64d4bc95a790",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c618dbc9-40d0-4cd6-b164-60a462ceb16e",
+              "name": "user_selected_product",
+              "value": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.messages[0].order.product_items }}",
+              "type": "array"
+            },
+            {
+              "id": "41163f52-519c-4a26-8f60-c5cbb759a21c",
+              "name": "unique_id_of_order",
+              "value": "={{ 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 10000) }}",
+              "type": "string"
+            },
+            {
+              "id": "21053b3f-1909-4bb3-9888-561355df41bc",
+              "name": "user_name",
+              "value": "={{ $node['Whatsapp Bot Webhook'].json.body.entry[0].changes[0].value.contacts[0].profile.name }}",
+              "type": "string"
+            },
+            {
+              "id": "36d108e7-b62c-4145-822c-640f588557a9",
+              "name": "user_phone_no",
+              "value": "={{ $node['Set Variable3'].json.msg_to }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2112,
+        1296
+      ],
+      "id": "0266074a-6530-4f99-90f5-9cb00e7c27e1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "user_selected_product",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        1296
+      ],
+      "id": "dc6bc203-bbdb-4c3a-a47f-79a0d51616db",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b414d52e-386d-4c0e-8eac-d0aeb8135ad6",
+              "name": "order_id",
+              "value": "={{ $('Whatsapp Bot Webhook').item.json.body.entry[0].changes[0].value.messages[0].interactive.button_reply.id.split(\"_\")[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1440,
+        240
+      ],
+      "id": "a69014bf-b115-48b3-a6a4-87541f481926",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU",
+          "mode": "list",
+          "cachedResultName": "catalog_products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 38109468,
+          "mode": "list",
+          "cachedResultName": "Order List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit#gid=38109468"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone Number": "={{ $json.phone_no }}",
+            "User": "={{ $json.user_name }}",
+            "Item_id": "={{ $json.product_id }}",
+            "Item": "={{ $json.product_title }}",
+            "Quantity": "={{ $json.product_quantity }}",
+            "Date": "={{ $now.setZone('Asia/Kolkata').format('yyyy-MM-dd T') }}",
+            "Status": "Order Placed",
+            "Order ID": "={{ $('Edit Fields2').item.json.order_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "User",
+              "displayName": "User",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Item_id",
+              "displayName": "Item_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Item",
+              "displayName": "Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1888,
+        240
+      ],
+      "id": "c2cd63fb-0212-44d8-b149-2cd202df1b1e",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "htaS8wafCR4Eh7v5",
+          "mode": "list",
+          "cachedResultName": "Alister Order Stage",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/htaS8wafCR4Eh7v5"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "unique_order_id",
+              "keyValue": "={{ $('Edit Fields2').item.json.order_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        240
+      ],
+      "id": "f32b909e-c5d9-4667-bb7e-3f1d531dd73f",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "263eb8a1-0b0b-4e98-bede-2ca52dc566ed",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1664,
+        1200
+      ],
+      "id": "36044611-9722-496d-bc0b-e84cfbc0a2f3",
+      "name": "If Stock is available"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3008,
+        1296
+      ],
+      "id": "f5c0894d-a6dd-4ae2-b3f5-912af624b565",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load data from nodes\nconst product_data = $(\"Get Stock data\").all().map(item => item.json);\nconst user_selected_data = $(\"Split Out\").all().map(item => item.json);\n\n// Final output list\nlet matched = [];\n\n// Loop through user-selected items\nfor (const userItem of user_selected_data) {\n  \n  const selectedId = String(userItem.product_retailer_id).trim();\n\n  // Find matching product from stock data\n  const stockItem = product_data.find(\n    p => String(p.id).trim() === selectedId\n  );\n\n  // If matched → append combined data\n  if (stockItem) {\n    matched.push({\n      product_retailer_id: selectedId,\n      title: stockItem.title,\n      quantity: userItem.quantity\n    });\n  }\n}\n\n// Return result\nreturn matched.map(m => ({ json: m }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        1296
+      ],
+      "id": "17aa442b-ceba-484b-bcb7-94230fcf7bea",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $items('Set Variable3')[0].json.msg_to }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"Your Order has been placed and we will deliver soon\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2336,
+        240
+      ],
+      "id": "5913b81f-3b6c-4738-9dfe-40a34452f421",
+      "name": "Send msg1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        240
+      ],
+      "id": "5be55bfe-cda8-4d5f-b09c-4ae847a12685",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $items('Set Variable3')[0].json.msg_to }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"Your Order Has Been Cancel \\nIf you want inital menu, type 'Menu' or 'Hello'\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1440,
+        816
+      ],
+      "id": "2fef4413-25da-430c-83ba-696edb16b317",
+      "name": "Cancel Msg",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $items('Set Variable3')[0].json.msg_to }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"This Feature is under Development \\nIf you want inital menu, type 'Menu' or 'Hello'\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1440,
+        624
+      ],
+      "id": "6f799046-e3d2-451e-add2-a3500d845adf",
+      "name": "FAQ msg",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Official Meta Connection",
+        "height": 1392,
+        "width": 3536
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        208
+      ],
+      "id": "8b3d1c60-1767-41e5-b192-555550fbb2ae",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU",
+          "mode": "list",
+          "cachedResultName": "catalog_products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 38109468,
+          "mode": "list",
+          "cachedResultName": "Order List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qNcwhfZ3p9c6UdqmrroMieFeawXX_UND-OMsRnEjbSU/edit#gid=38109468"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Phone Number",
+              "lookupValue": "={{ $json.msg_to }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        432
+      ],
+      "id": "276785c8-db60-404d-972d-e4edb285bf26",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load orders from sheet4\nconst order_list = $(\"Get row(s) in sheet4\").all().map(item => item.json);\n\n// If empty\nif (!order_list.length) {\n  return [{ json: { message: \"You have no orders at the moment.\" } }];\n}\n\n// Group by Order ID\nconst grouped = {};\n\nfor (const row of order_list) {\n  const orderId = row[\"Order ID\"];\n\n  if (!grouped[orderId]) {\n    grouped[orderId] = {\n      items: [],\n      status: row.Status,\n    };\n  }\n\n  grouped[orderId].items.push({\n    item: row.Item,\n    quantity: row.Quantity,\n  });\n}\n\n// Build the message\nlet msg = \"📦 *Your Order Summary*\\n\\nHere’s a quick overview of all your recent orders:\\n\\n\";\n\nfor (const [orderId, data] of Object.entries(grouped)) {\n  const totalQty = data.items.reduce((sum, i) => sum + Number(i.quantity), 0);\n\n  msg += `🧾 *Order ID:* ${orderId}\\n`;\n  msg += `📦 *Total Items:* ${totalQty}\\n`;\n  msg += `📌 *Status:* ${data.status}\\n`;\n  msg += `🛍️ *Items:*\\n`;\n\n  for (const item of data.items) {\n    msg += `   • ${item.item} ×${item.quantity}\\n`;\n  }\n\n  msg += `\\n`;\n}\n\n// msg += \"💬 If you'd like to *track*, *change*, or *cancel* any order, just reply with the Order ID (e.g., *ORD-1764326177122-8178*).\";\n\n// Return final message\nreturn [{ json: { message: msg } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1664,
+        432
+      ],
+      "id": "9b052eab-9670-45ea-849f-6a53667aa1a3",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/924412964080974/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $items('Set Variable3')[0].json.msg_to }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": {{ JSON.stringify($json.message) }}\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1888,
+        432
+      ],
+      "id": "3d9446ff-56f1-4390-b702-860f53b88530",
+      "name": "Send msg2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Whatsapp Bot Webhook": {
+      "main": [
+        [
+          {
+            "node": "Check webhook configure parameter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check webhook configure parameter": {
+      "main": [
+        [
+          {
+            "node": "Verify Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Set Variable3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FAQ msg",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancel Msg",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interative Type Route": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "mapping_item1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mapping_item1": {
+      "main": [
+        [
+          {
+            "node": "Send Multi Product Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Compliance Info Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compliance Info Post": {
+      "main": [
+        [
+          {
+            "node": "Compliance Info Get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Type Routing": {
+      "main": [
+        [
+          {
+            "node": "Interative Type Route",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Variable2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Stock data": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If Stock is available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error message": {
+      "main": [
+        [
+          {
+            "node": "Send msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Succes Msg": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send msg": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable2": {
+      "main": [
+        [
+          {
+            "node": "Get Stock data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable3": {
+      "main": [
+        [
+          {
+            "node": "Message Type Routing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Stock is available": {
+      "main": [
+        [
+          {
+            "node": "Error message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Succes Msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Send msg1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send msg2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c1d12c27-79c0-44c6-b42d-000139c7a58c",
+  "meta": {
+    "instanceId": "d789f98abc61e86dff687f330128f36b18e064e2b032acf62c2a72dbb26457d3"
+  },
+  "id": "iH9rV8O93cjKMPM4",
+  "tags": []
+}

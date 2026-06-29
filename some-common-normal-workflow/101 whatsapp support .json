@@ -1,0 +1,355 @@
+{
+  "name": "ChatSyncs",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"name\": \"{{ $json.name }}\",\n  \"email\": \"{{ $json.email }}\" \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        736,
+        -480
+      ],
+      "id": "f886cddb-1aee-48da-9882-123d1ee11835",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "chatbot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        -368
+      ],
+      "id": "787902c5-1f18-4931-b246-d0d875f428f3",
+      "name": "Webhook",
+      "webhookId": "0a789446-01cf-4fff-84c5-914f700decd0"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A",
+          "mode": "list",
+          "cachedResultName": "Course Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Users",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "phone_number",
+              "lookupValue": "={{ $json.query.phone_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        -464
+      ],
+      "id": "68c5b836-7291-4f29-bdac-a7e5c4088e99",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A",
+          "mode": "list",
+          "cachedResultName": "Course Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 459749978,
+          "mode": "list",
+          "cachedResultName": "Form Submission",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A/edit#gid=459749978"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone_number": "={{ $json.body.number }}",
+            "name": "={{ $json.body.content.nfmReply.screens['0'].name }}",
+            "email": "={{ $json.body.content.nfmReply.screens['0']['registered email'] }}",
+            "description": "={{ $json.body.content.nfmReply.screens['0']['description of issue'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        -336
+      ],
+      "id": "16073f29-ae00-4773-bc01-41f71611f901",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.content.interactiveType }}",
+                    "rightValue": "nfm_reply",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6ab940ed-e6d2-4a3f-893d-70064aa6f041"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Form "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6d984cb3-d870-4fb0-a714-3ce4a228c9bd",
+                    "leftValue": "={{ $json.body.feedback }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Feedback"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -272
+      ],
+      "id": "dc5c385b-ff18-4765-b83c-a3f691cdfec2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A",
+          "mode": "list",
+          "cachedResultName": "Course Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1816124294,
+          "mode": "list",
+          "cachedResultName": "Feedback",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fsCoQ-PZ7z4hKMA0e5WE2gsve_fFI1CGbHXcvaz3y5A/edit#gid=1816124294"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Feedback": "={{ $json.body.feedback }}",
+            "phone_number": "={{ $json.body.user_number }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        -208
+      ],
+      "id": "87bc9fdf-0afc-49c9-bc96-de1886119124",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7c4f66f5-f88b-4002-9ba1-9155f88f7020",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d789f98abc61e86dff687f330128f36b18e064e2b032acf62c2a72dbb26457d3"
+  },
+  "id": "eOr26bUwR0ih7ujboUXsT",
+  "tags": []
+}

@@ -1,0 +1,762 @@
+{
+  "name": "Test",
+  "nodes": [
+    {
+      "id": "RrPYXBTstu",
+      "type": "trigger",
+      "position": {
+        "x": 350.8518450661094,
+        "y": 12.94319811458951
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/on-message",
+        "title": "On Message",
+        "dataOut": {
+          "raw": {
+            "senderName": "John Doe",
+            "message": "Hi, i am John Doe",
+            "senderId": "919876543210",
+            "receiverId": "876543210321"
+          }
+        },
+        "type": "trigger",
+        "attributes": {
+          "receiverIds": [
+            "1064620473394036"
+          ],
+          "keywords": [
+            "hello",
+            "hi"
+          ],
+          "type": "text",
+          "fuzzyMatching": {
+            "enabled": true,
+            "threshold": 0.8
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 550
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "yvIAKP-6Xz",
+      "type": "action",
+      "position": {
+        "x": 1811.6163157523101,
+        "y": -203.96005616615082
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/send-list-message",
+        "title": "send initial message",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200,
+            "replyTitle": null
+          }
+        },
+        "attributes": {
+          "message": {
+            "type": "interactive",
+            "interactive": {
+              "type": "list",
+              "header": {
+                "type": "none"
+              },
+              "body": {
+                "text": "Here are the details for your WebVeda account:\n\n👉Registered email address:\n{{tEDamn0lXC.data.email}}\n\n👉Your name:\n{{tEDamn0lXC.data.name}}\n\nPlease choose an option from the menu below 👇"
+              },
+              "footer": {
+                "text": ""
+              },
+              "action": {
+                "button": "Main Menu ➡️",
+                "sections": [
+                  {
+                    "title": "Main Menu",
+                    "rows": [
+                      {
+                        "id": "row_1775156129721_5wpip6",
+                        "title": "1️⃣ Login & Access",
+                        "description": "For query related to accessing the course"
+                      },
+                      {
+                        "id": "row_1775156621286_2xx2tn",
+                        "title": "2️⃣ Course Help",
+                        "description": "Course related help"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 1279
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "T98dWxYLVB",
+      "type": "action",
+      "position": {
+        "x": 921.3395284431067,
+        "y": -77.26591900908713
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/send-button-message",
+        "title": "Send Button Message",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200,
+            "replyTitle": null
+          }
+        },
+        "attributes": {
+          "message": {
+            "type": "interactive",
+            "interactive": {
+              "type": "button",
+              "header": {
+                "type": "none"
+              },
+              "body": {
+                "text": "Hello 😊 \n\nThank you for contacting WebVeda Support.\n\nHave you bought a course on WebVeda?\n\nPlease click on the message buttons to get your queries resolved. This system doesn’t recognize typed messages."
+              },
+              "footer": {
+                "text": ""
+              },
+              "action": {
+                "buttons": [
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1775156208916_kknaem",
+                      "title": "Bought a course"
+                    }
+                  },
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1775156226694_j6njs0",
+                      "title": "Not bought a course"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 829
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "tEDamn0lXC",
+      "type": "action",
+      "position": {
+        "x": 1373.9945407804369,
+        "y": 12.192992028748904
+      },
+      "deletable": false,
+      "data": {
+        "key": "@http/http-request",
+        "nextHandle": true,
+        "title": "HTTP",
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "status": 200,
+            "data": {
+              "name": "lakshit",
+              "email": "laskhit@mgail.com"
+            },
+            "headers": {
+              "content-length": "46",
+              "content-type": "application/json; charset=utf-8"
+            },
+            "success": true
+          }
+        },
+        "attributes": {
+          "url": "https://n8n.srv894857.hstgr.cloud/webhook/chatbot",
+          "method": "GET",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "params": [
+            {
+              "key": "phone_number",
+              "value": "{{RrPYXBTstu.senderId}}"
+            }
+          ],
+          "body": ""
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 434
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "-Rx_OZd13I",
+      "type": "action",
+      "position": {
+        "x": 1230.7126316197694,
+        "y": 861.3273014522588
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/ask-question",
+        "title": "Ask Question",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200,
+            "answer": "string",
+            "question": "string"
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 571
+      },
+      "selected": false
+    },
+    {
+      "id": "85DoTJZbO2",
+      "type": "action",
+      "position": {
+        "x": 760.8578245022287,
+        "y": 874.7104571730329
+      },
+      "deletable": false,
+      "data": {
+        "key": "@contact/fetch-contact",
+        "title": "Fetch Contact",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "contact": {
+              "id": "contact_id",
+              "phoneNo": "919876543210",
+              "name": "John Doe",
+              "source": "whatsapp",
+              "tags": [
+                {
+                  "tagId": "tag_id",
+                  "name": "Interested"
+                }
+              ]
+            },
+            "columns": {
+              "email": "",
+              "waba_phone_number": "",
+              "remarks": "",
+              "lead_status": "",
+              "lead_attribute": "",
+              "other_source": "",
+              "page_name": "",
+              "form_name": "",
+              "job_title": "",
+              "company_name": ""
+            },
+            "columnsByLabel": {
+              "Email": "",
+              "WABA Phone Number": "",
+              "Remarks": "",
+              "Lead Status": "",
+              "Lead Attribute": "",
+              "Other Source": "",
+              "Page Name": "",
+              "Form Name": "",
+              "Job title": "",
+              "Company name": ""
+            },
+            "columnsList": [
+              {
+                "columnId": "69aff03ab997d18d46c645ef",
+                "key": "email",
+                "label": "Email",
+                "type": "TEXT",
+                "value": ""
+              },
+              {
+                "columnId": "69b10f6afb3ca1d0c0953bc7",
+                "key": "waba_phone_number",
+                "label": "WABA Phone Number",
+                "type": "TEXT",
+                "value": ""
+              },
+              {
+                "columnId": "69d4b37c05ba76f1c60e0705",
+                "key": "remarks",
+                "label": "Remarks",
+                "type": "TEXT",
+                "value": ""
+              },
+              {
+                "columnId": "69d61b624001b47b6704d226",
+                "key": "lead_status",
+                "label": "Lead Status",
+                "type": "SELECT",
+                "value": ""
+              },
+              {
+                "columnId": "69d61b744001b47b6704d25d",
+                "key": "lead_attribute",
+                "label": "Lead Attribute",
+                "type": "SELECT",
+                "value": ""
+              },
+              {
+                "columnId": "69d62afe4001b47b6705274d",
+                "key": "other_source",
+                "label": "Other Source",
+                "type": "TEXT",
+                "value": ""
+              },
+              {
+                "columnId": "69e0fc180b9696fa29b5b94d",
+                "key": "page_name",
+                "label": "Page Name",
+                "type": "SELECT",
+                "value": ""
+              },
+              {
+                "columnId": "69e0fc180b9696fa29b5b94e",
+                "key": "form_name",
+                "label": "Form Name",
+                "type": "SELECT",
+                "value": ""
+              },
+              {
+                "columnId": "69e0fc180b9696fa29b5b950",
+                "key": "job_title",
+                "label": "Job title",
+                "type": "TEXT",
+                "value": ""
+              },
+              {
+                "columnId": "69e0fc180b9696fa29b5b94f",
+                "key": "company_name",
+                "label": "Company name",
+                "type": "TEXT",
+                "value": ""
+              }
+            ]
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 351
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "ITGC5RN1vW",
+      "type": "action",
+      "position": {
+        "x": 2430.8665791443887,
+        "y": -866.8858672197579
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/send-list-message",
+        "title": "Send List Message",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200,
+            "replyTitle": null
+          }
+        },
+        "attributes": {
+          "message": {
+            "type": "interactive",
+            "interactive": {
+              "type": "list",
+              "header": {
+                "type": "none"
+              },
+              "body": {
+                "text": "We are here to help you login to WebVeda smoothly and access your course.\n\nPlease choose your query below 👇"
+              },
+              "footer": {
+                "text": "{{yvIAKP-6Xz.replyTitle}}"
+              },
+              "action": {
+                "button": "Access queries ➡️",
+                "sections": [
+                  {
+                    "title": "Something",
+                    "rows": [
+                      {
+                        "id": "row_1776859541157_aqle0b",
+                        "title": "Unable to login",
+                        "description": ""
+                      },
+                      {
+                        "id": "row_1776859697414_05ckvw",
+                        "title": "Course not visible",
+                        "description": ""
+                      },
+                      {
+                        "id": "row_1776859705415_cppd6j",
+                        "title": "How to watch course",
+                        "description": ""
+                      },
+                      {
+                        "id": "row_1776859716943_kdz4ic",
+                        "title": "Change email address",
+                        "description": ""
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 1643
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "wgiNKfsnn_",
+      "type": "action",
+      "position": {
+        "x": 2984.5368322181685,
+        "y": -478.8710399723461
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/send-button-message",
+        "title": "Send Button Message",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200,
+            "replyTitle": null
+          }
+        },
+        "attributes": {
+          "message": {
+            "type": "interactive",
+            "interactive": {
+              "type": "button",
+              "header": {
+                "type": "none"
+              },
+              "body": {
+                "text": "If you have logged in but can’t see your course, here are the possible reasons:\n\n👉 If you have just enrolled, the course may take a little time to reflect on your dashboard. Please check again in 10 minutes.\n\n👉 Ensure you have logged in using the same email address you used to register for the course."
+              },
+              "footer": {
+                "text": ""
+              },
+              "action": {
+                "buttons": [
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1776859800299_xp0xp0",
+                      "title": "Got it 👍"
+                    }
+                  },
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1776859829734_pl41y8",
+                      "title": "I still need help 👎"
+                    }
+                  },
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1776859841468_q19irq",
+                      "title": "Return to menu ⬅️"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 909
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "FimsQCG1xL",
+      "type": "action",
+      "position": {
+        "x": 3843.993182935195,
+        "y": -1174.5672172673485
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/send-button-message",
+        "title": "Send Button Message",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200,
+            "replyTitle": null
+          }
+        },
+        "attributes": {
+          "message": {
+            "type": "interactive",
+            "interactive": {
+              "type": "button",
+              "header": {
+                "type": "image",
+                "image": {
+                  "link": "https://media.licdn.com/dms/image/v2/D5603AQGS8sOga6qKtw/profile-displayphoto-scale_200_200/B56ZzdYHG4HMAY-/0/1773240615696?e=1778716800&v=beta&t=nCzw8AOFZq1Jd1aWQGjNnoqr73OfoDYb0_00voZplZo"
+                }
+              },
+              "body": {
+                "text": "Quick question - did you like our WhatsApp Support? \n\nPlease share your feedback by choosing an option below 👇"
+              },
+              "footer": {
+                "text": ""
+              },
+              "action": {
+                "buttons": [
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1776859912001_8rhnxd",
+                      "title": "Loved it 🤩"
+                    }
+                  },
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1776859955043_27scfq",
+                      "title": "It was okay 🙂"
+                    }
+                  },
+                  {
+                    "type": "reply",
+                    "reply": {
+                      "id": "btn_1776859967326_rjzzwe",
+                      "title": "Needs improvement 😔"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 909
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "P_XV5vEqXh",
+      "type": "action",
+      "position": {
+        "x": 3682.7254619395626,
+        "y": -63.67133592373553
+      },
+      "deletable": false,
+      "data": {
+        "key": "@whatsapp/send-template-message",
+        "title": "Send Template Message",
+        "nextHandle": true,
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "success": true,
+            "status": 200
+          }
+        },
+        "attributes": {
+          "recipientNumber": "{{RrPYXBTstu.senderId}}",
+          "wabaId": "765663836344566",
+          "templateId": "get_help",
+          "phoneNoId": "1064620473394036",
+          "sampleValues": []
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 367
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "Dzk_JYc0A6",
+      "type": "action",
+      "position": {
+        "x": 4478.017450702906,
+        "y": -751.924138529881
+      },
+      "deletable": false,
+      "data": {
+        "key": "@http/http-request",
+        "nextHandle": true,
+        "title": "HTTP",
+        "type": "action",
+        "dataOut": {
+          "raw": {
+            "status": 200,
+            "data": {
+              "name": "lakshit",
+              "email": "laskhit@mgail.com"
+            },
+            "headers": {
+              "content-length": "46",
+              "content-type": "application/json; charset=utf-8"
+            },
+            "success": true
+          }
+        },
+        "attributes": {
+          "url": "https://n8n.srv894857.hstgr.cloud/webhook/chatbot",
+          "method": "POST",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "params": [],
+          "body": "{ \n  \"user_number\": \"{{RrPYXBTstu.senderId}}\",\n  \"feedback\": \"{{FimsQCG1xL.replyTitle}}\"\n}"
+        }
+      },
+      "measured": {
+        "width": 384,
+        "height": 434
+      },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "RrPYXBTstu",
+      "sourceHandle": "default",
+      "target": "T98dWxYLVB",
+      "animated": true,
+      "id": "xy-edge__RrPYXBTstudefault-T98dWxYLVB"
+    },
+    {
+      "source": "T98dWxYLVB",
+      "sourceHandle": "btn_1775156208916_kknaem",
+      "target": "tEDamn0lXC",
+      "animated": true,
+      "id": "xy-edge__T98dWxYLVBbtn_1775156208916_kknaem-tEDamn0lXC"
+    },
+    {
+      "source": "tEDamn0lXC",
+      "sourceHandle": "default",
+      "target": "yvIAKP-6Xz",
+      "animated": true,
+      "id": "xy-edge__tEDamn0lXCdefault-yvIAKP-6Xz"
+    },
+    {
+      "source": "yvIAKP-6Xz",
+      "sourceHandle": "row_1775156129721_5wpip6",
+      "target": "ITGC5RN1vW",
+      "animated": true,
+      "id": "xy-edge__yvIAKP-6Xzrow_1775156129721_5wpip6-ITGC5RN1vW"
+    },
+    {
+      "source": "ITGC5RN1vW",
+      "sourceHandle": "row_1776859697414_05ckvw",
+      "target": "wgiNKfsnn_",
+      "animated": true,
+      "id": "xy-edge__ITGC5RN1vWrow_1776859697414_05ckvw-wgiNKfsnn_"
+    },
+    {
+      "source": "wgiNKfsnn_",
+      "sourceHandle": "btn_1776859800299_xp0xp0",
+      "target": "FimsQCG1xL",
+      "animated": true,
+      "id": "xy-edge__wgiNKfsnn_btn_1776859800299_xp0xp0-FimsQCG1xL"
+    },
+    {
+      "source": "wgiNKfsnn_",
+      "sourceHandle": "btn_1776859829734_pl41y8",
+      "target": "P_XV5vEqXh",
+      "animated": true,
+      "id": "xy-edge__wgiNKfsnn_btn_1776859829734_pl41y8-P_XV5vEqXh"
+    },
+    {
+      "source": "FimsQCG1xL",
+      "sourceHandle": "btn_1776859912001_8rhnxd",
+      "target": "Dzk_JYc0A6",
+      "animated": true,
+      "id": "xy-edge__FimsQCG1xLbtn_1776859912001_8rhnxd-Dzk_JYc0A6"
+    },
+    {
+      "source": "FimsQCG1xL",
+      "sourceHandle": "btn_1776859955043_27scfq",
+      "target": "Dzk_JYc0A6",
+      "animated": true,
+      "id": "xy-edge__FimsQCG1xLbtn_1776859955043_27scfq-Dzk_JYc0A6"
+    },
+    {
+      "source": "FimsQCG1xL",
+      "sourceHandle": "btn_1776859967326_rjzzwe",
+      "target": "Dzk_JYc0A6",
+      "animated": true,
+      "id": "xy-edge__FimsQCG1xLbtn_1776859967326_rjzzwe-Dzk_JYc0A6"
+    }
+  ],
+  "status": "published",
+  "version": "1.0",
+  "exportedAt": "2026-04-23T07:09:31.244Z"
+}

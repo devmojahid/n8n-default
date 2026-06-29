@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "n8n-docs": {
+      "type": "http",
+      "url": "https://docs.n8n.io/~gitbook/mcp"
+    },
+    "n8n-mcp": {
+      "type": "http",
+      "url": "https://api.n8n-mcp.com/mcp"
+    }
+  }
+}

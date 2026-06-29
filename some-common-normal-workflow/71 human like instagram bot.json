@@ -1,0 +1,951 @@
+{
+  "name": "71 human like instagram bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        288
+      ],
+      "id": "3b442178-ff16-4f7e-a19d-2fe3d3dd094a",
+      "name": "WhatsApp Trigger",
+      "webhookId": "e57e8925-ccd3-4cfa-8a84-60bff5909af1",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "nQbla4DtMJIZMbEt",
+          "name": "n8n-test-2 account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v24.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\":{\n    \"id\":\"{{ $node['Receive Whatsapp Message'].json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"message\":{\n      \"text\": \"{{ $json.message.replace(/\\n/g, \"\\\\n\") }}\"\n   }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3040,
+        528
+      ],
+      "id": "491edcba-6105-4d4d-b88c-c7f00556328a",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        },
+        "httpQueryAuth": {
+          "id": "8We2r2A8o92UFREa",
+          "name": "Luv Query Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code in JavaScript2').item.json.combined_message }}",
+        "options": {
+          "systemMessage": "=Name: Kady\nRole: You are an expert receptionist for Toothsi Clinic. Your job is to communicate with your user, serve them properly, and solve their task. \n\n\nNote:\n1. User message has multiple message seperated by '|' and for each message there is ID:\n2. Output your response as a List JSON object with between one and three messages, where possible, default to fewer messages.\n3. With that message I want message id which user has passed\n4. This will help me to tag that particular message and reply to it \n\nSince you are an SMS assistant, your output usually spans multiple ‘texts’. Feel free to use emojis in messages, and if it makes sense, some messages can be emojis only.\n\nExample:\n\n[\n  {\n    \"message\": \"Hi there!\",\n    \"message_id\": \"wamid:kvneknknv\"\n  }\n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2240,
+        528
+      ],
+      "id": "2aaf3d37-a5c1-48ce-9c60-3d5f7f3f5781",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        752
+      ],
+      "id": "edebe7bd-5eac-4edd-ac8d-964195a49a0f",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "TLy9RuRkIKncoUiy",
+          "name": "OpenRouter Freelance account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "testing-ig-prodd",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -464,
+        528
+      ],
+      "id": "cf7078c2-2006-48eb-95a1-3d66720a7817",
+      "name": "Receive Whatsapp Message",
+      "webhookId": "c2a37ab5-9316-4d86-9685-c8a91cf3ea48"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef6c2837-9317-4ef6-afae-fdfa885c71c6",
+              "name": "message",
+              "value": "={{ $json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "625cec94-67c9-458b-8d58-b7851f8bcec5",
+              "name": "number",
+              "value": "={{ $json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "e8745982-aacb-422c-b003-fb7eb4c23303",
+              "name": "message_id",
+              "value": "={{ $json.body.entry[0].messaging[0].message.mid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        624
+      ],
+      "id": "e1e00ebd-7c9a-4ae1-8da4-f50ebad48b3d",
+      "name": "Variable mapping"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "aNkqPGZsrwVsVTiZ",
+          "mode": "list",
+          "cachedResultName": "Msg Batch Processing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/aNkqPGZsrwVsVTiZ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.message }}",
+            "message_status": "in_queue",
+            "number": "={{ $json.number }}",
+            "message_id": "={{ $json.message_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "message_status",
+              "displayName": "message_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "number",
+              "displayName": "number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        448,
+        624
+      ],
+      "id": "e6f32c92-cb49-41ca-a2f2-9ac588489219",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        624
+      ],
+      "id": "b0c29cd9-528f-4eac-aabd-8f70e5987d87",
+      "name": "Wait",
+      "webhookId": "b7fbb284-0a1d-4bd9-a6b2-bf507939b737"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        624
+      ],
+      "id": "3de07dc7-9514-409f-8650-4d108c5dbce6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        528
+      ],
+      "id": "d1f8178d-3af0-4d1d-bc4e-081d22d25986",
+      "name": "Done Processing"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aNkqPGZsrwVsVTiZ",
+          "mode": "list",
+          "cachedResultName": "Msg Batch Processing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/aNkqPGZsrwVsVTiZ"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "number",
+              "keyValue": "={{ $('Variable mapping').item.json.number }}"
+            },
+            {
+              "keyName": "message_status",
+              "keyValue": "in_queue"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        896,
+        624
+      ],
+      "id": "5478fa41-53fc-4dff-92ed-5818d9eee9b5",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "aNkqPGZsrwVsVTiZ",
+          "mode": "list",
+          "cachedResultName": "Msg Batch Processing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/aNkqPGZsrwVsVTiZ"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Loop Over Items').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message_status": "processed"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "message_status",
+              "displayName": "message_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "number",
+              "displayName": "number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        720
+      ],
+      "id": "3c0f2c4c-d82c-4379-840f-74a0585a29d1",
+      "name": "Update row(s)"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Code in JavaScript2').item.json.number }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2384,
+        752
+      ],
+      "id": "2726e92d-4659-4380-8df3-420a627bb1a1",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse JSON string from the \"output\" field and convert messages into an array of objects\n\nconst rawOutput = items[0].json.output; // get the string\nconst parsed = JSON.parse(rawOutput);   // parse the JSON string\n\n// Convert key-value pairs into list of objects\n// const messageList = Object.entries(parsed).map(([key, value]) => ({\n//   key,\n//   message: value\n// }));\n\n// return messageList.map(msg => ({ json: msg }));\nreturn parsed\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2592,
+        528
+      ],
+      "id": "1e0564cc-478e-42c3-ba6d-b284dba389ec",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2816,
+        528
+      ],
+      "id": "fdf33454-8cb6-46cc-8b44-dee00c6d965e",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const combinedMessage = items\n  .map(msg => `${msg.json.message} (ID: ${msg.json.message_id})`)\n  .join(' | '); // use '\\n' for line breaks or ' | ' for single line\n\nconst number = items[0].json.number\n\nreturn [\n  {\n    json: {\n      number: number,\n      combined_message: combinedMessage,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        528
+      ],
+      "id": "bcf8eb5e-f110-4562-8fe9-9299a8cf5631",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v24.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\":{\n    \"id\":\"{{ $node['Receive Whatsapp Message'].json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"sender_action\":\"mark_seen\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1792,
+        528
+      ],
+      "id": "0164cefd-70b5-4337-9332-5365c1da1d1a",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        },
+        "httpQueryAuth": {
+          "id": "8We2r2A8o92UFREa",
+          "name": "Luv Query Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6d4e8e34-f90e-4c8b-ad5f-e43f67bedb61",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "d533959e-01b1-42c6-bd28-d31c3aa84c71",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "lakshit",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        448
+      ],
+      "id": "fa6d50ed-779d-4230-9c4b-e3b2ad1fdac8",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Receive Whatsapp Message').item.json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        16,
+        448
+      ],
+      "id": "3fdc4483-cd4e-4b0c-9672-7f3b7b5a526f",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c829d199-44d1-47a7-a8a5-c41d874a441f",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message.is_echo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        624
+      ],
+      "id": "31fadb62-ac6b-42e0-95bd-f336a004bd40",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -192,
+        624
+      ],
+      "id": "85c0060a-d842-4649-a4a5-757a0da571f6",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v24.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\":{\n    \"id\":\"{{ $node['Receive Whatsapp Message'].json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"sender_action\":\"typing_on\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2000,
+        528
+      ],
+      "id": "2b3fd6be-c917-4c75-8133-9729552fa0fb",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        },
+        "httpQueryAuth": {
+          "id": "8We2r2A8o92UFREa",
+          "name": "Luv Query Auth"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2992,
+        368
+      ],
+      "id": "b4a07625-84ec-4fa3-8ad0-a63cb4cbb79e",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {
+    "WhatsApp Trigger": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "15556590601",
+            "phone_number_id": "902774616244718"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Mosmi Patel"
+              },
+              "wa_id": "918655991300"
+            }
+          ],
+          "messages": [
+            {
+              "from": "918655991300",
+              "id": "wamid.HBgMOTE4NjU1OTkxMzAwFQIAEhgWM0VCMEQ5QzlBRDg1NzVDNjUyQkE3NwA=",
+              "timestamp": "1762421516",
+              "text": {
+                "body": "Hey"
+              },
+              "type": "text"
+            }
+          ],
+          "field": "messages"
+        }
+      }
+    ],
+    "Receive Whatsapp Message": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.srv894857.hstgr.cloud",
+            "user-agent": "facebookexternalua",
+            "content-length": "395",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/json",
+            "instagram-api-version": "v24.0",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "n8n.srv894857.hstgr.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "66397d07d3d3",
+            "x-hub-signature": "sha1=3daa382bea82f911e14bf00da7dbff89f118095c",
+            "x-hub-signature-256": "sha256=ffe16b529562a36b6ced20da42320ed9e0f37a09ce0771646c5b5ab59930cac9",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "object": "instagram",
+            "entry": [
+              {
+                "time": 1765391145479,
+                "id": "17841400941858115",
+                "messaging": [
+                  {
+                    "sender": {
+                      "id": "731175206551637"
+                    },
+                    "recipient": {
+                      "id": "17841400941858115"
+                    },
+                    "timestamp": 1765391144899,
+                    "message": {
+                      "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDAwOTQxODU4MTE1OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI1ODcyMDk0MDE2MDU1MjYxOTozMjU2NTcxODYzOTk1ODM1OTM1NjMwMzc2MjQ1MDgwODgzMgZDZD",
+                      "text": "hello"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "webhookUrl": "https://n8n.srv894857.hstgr.cloud/webhook/testing-ig-prodd",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variable mapping": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Done Processing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done Processing": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row(s)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Whatsapp Message": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Variable mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e9748a1e-3b69-4863-85d7-40b93606a1f4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d789f98abc61e86dff687f330128f36b18e064e2b032acf62c2a72dbb26457d3"
+  },
+  "id": "KWCht0OzCoGKIqU5",
+  "tags": []
+}

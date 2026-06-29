@@ -1,0 +1,610 @@
+{
+  "name": "74. Whatsapp Flow (Lead generation)",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "whatsapp-flow",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -576,
+        48
+      ],
+      "id": "aa2e4bb6-e6df-4513-aa89-ee997b66ff72",
+      "name": "Webhook",
+      "webhookId": "739e3070-e4e5-4d15-b048-5529c8c523bb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cb84fa11-ec27-4877-83ea-3a11a195fc92",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "cc0f2c01-431e-4fc0-9386-3c31b52fec46",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "lakshit",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -368,
+        -128
+      ],
+      "id": "bea97ed8-e695-4f09-b541-5b368b961976",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        -128
+      ],
+      "id": "1e5a6b01-59a0-49ea-8978-613f19727b43",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $json.app_version }}/{{ $json.phone_number_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient_type\": \"individual\",\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.user_number }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"flow\",\n    \"header\": {\n      \"type\": \"image\",\n      \"image\": {\n        \"link\": \"https://i.postimg.cc/SxZ9xFcH/Gemini-Generated-Image-d1cjowd1cjowd1cj.png\"\n      }\n    },\n    \"body\": {\n      \"text\": \"Answer a few quick questions so we can understand your requirement and get back to you faster 😊\\n\\nNo back-and-forth messages. Takes less than 30 seconds.\"\n    },\n    \"footer\": {\n      \"text\": \"Your details are safe with us 🔒\"\n    },\n    \"action\": {\n      \"name\": \"flow\",\n      \"parameters\": {\n        \"flow_message_version\": \"3\",\n        \"flow_id\": \"25615782721441374\",\n        \"flow_cta\": \"Get Started\",\n        \"flow_token\": \"service_enquiry\"\n      }\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        368
+      ],
+      "id": "97eb1165-730f-4dbb-b329-e9008aef5158",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6de59eb4-a400-4c3a-b553-5ab74987778c",
+              "leftValue": "={{ $json.body.entry[0].changes[0].value.statuses[0].status }}",
+              "rightValue": "read",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -368,
+        256
+      ],
+      "id": "3b76d25d-5b80-4849-8c14-de7da578efff",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8adf164e-e24e-4693-ad9c-540031adbc66",
+              "name": "phone_number_id",
+              "value": "={{ $json.body.entry[0].changes[0].value.metadata.phone_number_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e90a0536-0be2-43e2-9580-4fd111f19d57",
+              "name": "user_number",
+              "value": "={{ $json.body.entry[0].changes[0].value.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ffe41fb9-29de-4fbc-8855-209c48946961",
+              "name": "bot_number",
+              "value": "={{ $json.body.entry[0].changes[0].value.metadata.display_phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "678e1e3f-c93a-4339-bd3a-77f3b6a2f832",
+              "name": "WABA_id",
+              "value": "={{ $json.body.entry[0].id }}",
+              "type": "string"
+            },
+            {
+              "id": "1dfdb50b-aae0-4614-9923-d73c50aa9cc9",
+              "name": "app_version",
+              "value": "v24.0",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        256
+      ],
+      "id": "95a8f096-d23b-40d6-8bcb-944ab1bb9f55",
+      "name": "set_variable"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Filter1').item.json.body.entry[0].changes[0].value.messages[0].interactive.type }}",
+                    "rightValue": "nfm_reply",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1f2c8ae3-3577-41f2-89aa-dddba3572a9c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Flow Response"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "822bf63b-43d0-418d-80da-1a0c0cf2919e",
+                    "leftValue": "={{ $('Filter1').item.json.body.entry[0].changes[0].value.messages[0].type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Normal Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        16,
+        256
+      ],
+      "id": "0c61c6f0-6d61-4299-bdd5-0c98eb20b2be",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eda11143-fa9b-43dd-9aff-e7aa847ae4e1",
+              "name": "flow_object",
+              "value": "={\n  \"0_AI_Automation\": \"AI Automation\",\n  \"1_WhatsApp_Automation\": \"WhatsApp Automation\",\n  \"2_Instagram_Automation\": \"Instagram Automation\",\n  \"3_Facebook_Automation\": \"Facebook Automation\",\n  \"4_Custom_Workflow_Setup\": \"Custom Workflow Setup\",\n  \"5_Just_Exploring_🙂\": \"Just Exploring 🙂\",\n\n  \"0_Below_₹10,000\": \"Below ₹10,000\",\n  \"1_₹10,000_–_₹50,000\": \"₹10,000 – ₹50,000\",\n  \"2_₹50,000_–_₹1,00,000\": \"₹50,000 – ₹1,00,000\",\n  \"3_₹1,00,000+\": \"₹1,00,000+\",\n  \"4_Not_sure_yet_🤔\": \"Not sure yet 🤔\",\n\n  \"0_Morning_(10_AM_–_12_PM)\": \"Morning (10 AM – 12 PM)\",\n  \"1_Afternoon_(12_PM_–_4_PM)\": \"Afternoon (12 PM – 4 PM)\",\n  \"2_Evening_(4_PM_–_7_PM)\": \"Evening (4 PM – 7 PM)\",\n  \"3_Anytime_👍\": \"Anytime 👍\"\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        160
+      ],
+      "id": "16f291f3-d021-4be5-aebc-af6cf14f9e09",
+      "name": "Create Mapping"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 1: Get raw response_json from WhatsApp webhook\nconst response_json =\n  $('Webhook')\n    .first()\n    .json\n    .body\n    .entry[0]\n    .changes[0]\n    .value\n    .messages[0]\n    .interactive\n    .nfm_reply\n    .response_json;\n\n// Step 2: Parse response_json\nlet parsedResponseJson;\ntry {\n  parsedResponseJson = JSON.parse(response_json);\n} catch (error) {\n  throw new Error('Invalid JSON in response_json: ' + error.message);\n}\n\n// Step 3: Get the mapping object from Edit Fields\nconst flowObject = $json.flow_object;\n\n// Step 4: Extract submitted values\nconst name =\n  parsedResponseJson.screen_0_Your_Full_Name__0;\n\nconst phone =\n  parsedResponseJson.screen_0_Your_Phone_Number__1;\n\nconst serviceId =\n  parsedResponseJson.screen_0_Service_Needed__2;\n\nconst budgetId =\n  parsedResponseJson.screen_0_Estimated_Budget__3;\n\nconst callbackId =\n  parsedResponseJson.screen_0_Callback_Time__4;\n\n// Step 5: Map IDs → readable labels using flow_object\nreturn [\n  {\n    json: {\n      name,\n      phone,\n      service: flowObject[serviceId],\n      budget: flowObject[budgetId],\n      callback_time: flowObject[callbackId]\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        160
+      ],
+      "id": "c1403858-d04e-4f99-8e1c-d2db2acd406b",
+      "name": "Get Proper Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13f6d065-8cfa-4548-ad00-2c0d7e4530ca",
+              "name": "reply_back",
+              "value": "=Hey {{ $json.name }} 👋  \n\nThanks for sharing your details 😊  \nWe’ve received your request for *{{ $json.service }}*.\n\nOur team will contact you *{{ $json.callback_time }}* 📞  \nLooking forward to connecting! 🚀\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        160
+      ],
+      "id": "567aa940-a6bf-4f24-a6d1-b11c1cee7e96",
+      "name": "Reply Back Message"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $('set_variable').item.json.app_version }}/{{ $('set_variable').item.json.phone_number_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('set_variable').item.json.user_number }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"{{ $json.reply_back.replace(/\\n/g, \"\\\\n\") }}\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        864,
+        160
+      ],
+      "id": "9fa70c3e-3b55-4b9d-b0e2-6f84e9bcee97",
+      "name": "Send Normal Message",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WvuhlUlNnKh3rBVp72JW9LkLG5kkNOvAbVR71Ky0HJA",
+          "mode": "list",
+          "cachedResultName": "Service Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WvuhlUlNnKh3rBVp72JW9LkLG5kkNOvAbVR71Ky0HJA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WvuhlUlNnKh3rBVp72JW9LkLG5kkNOvAbVR71Ky0HJA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Get Proper Data').item.json.name }}",
+            "Phone Number": "={{ $('Get Proper Data').item.json.phone }}",
+            "Service Needed": "={{ $('Get Proper Data').item.json.service }}",
+            "Budget": "={{ $('Get Proper Data').item.json.budget }}",
+            "Callback Time": "={{ $('Get Proper Data').item.json.callback_time }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Needed",
+              "displayName": "Service Needed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Callback Time",
+              "displayName": "Callback Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        160
+      ],
+      "id": "4d23a406-e6fb-42c8-b509-88d9286c0fc6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZc9FZPSLRtIq9IL",
+          "name": "Lakshit77 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A1BTD6867",
+          "mode": "list",
+          "cachedResultName": "work-notification"
+        },
+        "messageType": "block",
+        "blocksUi": "={\n\"blocks\": [\n  {\n    \"type\": \"header\",\n    \"text\": {\n      \"type\": \"plain_text\",\n      \"text\": \"📧 New Lead Added\",\n      \"emoji\": true\n    }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": {\n      \"type\": \"mrkdwn\",\n      \"text\": \"You have received a new Lead. Here are the details:\"\n    }\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Name:*\\n{{ $json.Name }}\"\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Phone Number:*\\n{{ $json['Phone Number'] }}\"\n      }\n    ]\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Service Needed:*\\n{{ $json['Service Needed'] }}\"\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Budget:*\\n{{ $json.Budget }}\"\n      }\n    ]\n  },\n  {\n    \"type\": \"section\",\n    \"fields\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Callback Time:*\\n{{ $json['Callback Time'] }}\"\n      },\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Received At:*\\n{{ $now.setZone('Asia/Kolkata').toFormat('dd MMM yyyy, hh:mm a') }}\"\n      }\n    ]\n  },\n  {\n    \"type\": \"divider\"\n  },\n  {\n    \"type\": \"context\",\n    \"elements\": [\n      {\n        \"type\": \"mrkdwn\",\n        \"text\": \"📬 New Lead Trigger | Processed by n8n automation\"\n      }\n    ]\n  }\n]\n}",
+        "text": "📧 New Lead",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1312,
+        160
+      ],
+      "id": "e741a572-d33e-453f-9910-13eac6917a99",
+      "name": "Send a message",
+      "webhookId": "2f855d1e-c00f-485a-a8f7-dc5bb9fc0dd5",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "ZC8Jm1dyTNehWjKR",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "set_variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_variable": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Mapping": {
+      "main": [
+        [
+          {
+            "node": "Get Proper Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Proper Data": {
+      "main": [
+        [
+          {
+            "node": "Reply Back Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Back Message": {
+      "main": [
+        [
+          {
+            "node": "Send Normal Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Normal Message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ce44e279-7d07-4cad-a2bb-5e9d0f038204",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d789f98abc61e86dff687f330128f36b18e064e2b032acf62c2a72dbb26457d3"
+  },
+  "id": "Jh2Q27arUSybgJuV",
+  "tags": []
+}

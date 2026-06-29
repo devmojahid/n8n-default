@@ -1,0 +1,1462 @@
+{
+  "name": "76 Whatsapp FLow with Endpoint",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "flow-endpoint",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        560
+      ],
+      "id": "6e0acf10-137b-47c9-9a2e-2724ef5b2383",
+      "name": "Webhook",
+      "webhookId": "e0001cca-1abe-4bdc-aa96-f4c16e7ef68e"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -256
+      ],
+      "id": "ad88a899-ee03-4aa5-8976-5e5c5f9d7a99",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $('set_variable').item.json.app_version }}/{{ $('set_variable').item.json.phone_number_id }}/whatsapp_business_encryption",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "business_public_key",
+              "value": "={{ $json.publicKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        240,
+        -256
+      ],
+      "id": "b649b786-ddb5-46dc-931e-ca9d31a1e6d3",
+      "name": "Send Normal Message",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iR5q4Pc809XWa04V",
+          "name": "whatsapp wa-agent-alister app Lakshit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8adf164e-e24e-4693-ad9c-540031adbc66",
+              "name": "phone_number_id",
+              "value": "=924412964080974",
+              "type": "string"
+            },
+            {
+              "id": "e90a0536-0be2-43e2-9580-4fd111f19d57",
+              "name": "passphrase",
+              "value": "=lakshit",
+              "type": "string"
+            },
+            {
+              "id": "678e1e3f-c93a-4339-bd3a-77f3b6a2f832",
+              "name": "WABA_id",
+              "value": "=1513036893303968",
+              "type": "string"
+            },
+            {
+              "id": "1dfdb50b-aae0-4614-9923-d73c50aa9cc9",
+              "name": "app_version",
+              "value": "v24.0",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -256
+      ],
+      "id": "d2bd339b-900e-4d4a-a98c-50c56c7f0ba7",
+      "name": "set_variable"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cb84fa11-ec27-4877-83ea-3a11a195fc92",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "cc0f2c01-431e-4fc0-9386-3c31b52fec46",
+              "leftValue": "={{ $json.query['hub.verify_token'] }}",
+              "rightValue": "lakshit",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        464
+      ],
+      "id": "d20a0f40-06d5-4e5b-b119-0810be4fa26d",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        464
+      ],
+      "id": "3e318b1a-b599-4643-863e-07031df10544",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6de59eb4-a400-4c3a-b553-5ab74987778c",
+              "leftValue": "={{ $json.body.entry[0].changes[0].value.statuses[0].status }}",
+              "rightValue": "read",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        656
+      ],
+      "id": "968e749f-415a-4da3-a45b-57588308caaf",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8adf164e-e24e-4693-ad9c-540031adbc66",
+              "name": "phone_number_id",
+              "value": "={{ $json.body.entry[0].changes[0].value.metadata.phone_number_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e90a0536-0be2-43e2-9580-4fd111f19d57",
+              "name": "user_number",
+              "value": "={{ $json.body.entry[0].changes[0].value.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ffe41fb9-29de-4fbc-8855-209c48946961",
+              "name": "bot_number",
+              "value": "={{ $json.body.entry[0].changes[0].value.metadata.display_phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "678e1e3f-c93a-4339-bd3a-77f3b6a2f832",
+              "name": "WABA_id",
+              "value": "={{ $json.body.entry[0].id }}",
+              "type": "string"
+            },
+            {
+              "id": "1dfdb50b-aae0-4614-9923-d73c50aa9cc9",
+              "name": "app_version",
+              "value": "v24.0",
+              "type": "string"
+            },
+            {
+              "id": "f8829ceb-98b3-451c-bedb-7d98926ca734",
+              "name": "encrypted_flow_data",
+              "value": "={{ $json.body.encrypted_flow_data }}",
+              "type": "string"
+            },
+            {
+              "id": "b88e0853-07da-4b63-8c07-6b76988985be",
+              "name": "encrypted_aes_key",
+              "value": "={{ $json.body.encrypted_aes_key }}",
+              "type": "string"
+            },
+            {
+              "id": "4dc89282-ea5c-4217-8139-167f6c85528c",
+              "name": "initial_vector",
+              "value": "={{ $json.body.initial_vector }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        656
+      ],
+      "id": "13d7982f-25f5-4c4e-bc0a-5d9854211fce",
+      "name": "set_variable1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node - RSA Key Pair Generator for WhatsApp Flows (CORRECT)\nconst crypto = require('crypto');\n\n// Generate RSA key pair (UNENCRYPTED)\nconst keyPair = crypto.generateKeyPairSync(\"rsa\", {\n  modulusLength: 2048,\n  publicKeyEncoding: {\n    type: \"spki\",\n    format: \"pem\",\n  },\n  privateKeyEncoding: {\n    type: \"pkcs8\",\n    format: \"pem\"\n  },\n});\n\nreturn {\n  json: {\n    success: true,\n    message: \"Unencrypted RSA key pair generated for WhatsApp Flows\",\n    privateKey: keyPair.privateKey,\n    publicKey: keyPair.publicKey,\n    instructions: {\n      step1: \"Store PRIVATE_KEY securely (ENV / Secrets)\",\n      step2: \"Upload PUBLIC_KEY to Meta WhatsApp Flow Encryption\",\n      step3: \"Do NOT add passphrase or cipher\",\n    }\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        -256
+      ],
+      "id": "eedea698-6739-4855-803a-99372cb3c4c8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Private and Pubic Key and Register Sign Up Public Key",
+        "height": 240,
+        "width": 1200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -336
+      ],
+      "id": "6c85fbe6-e850-49dc-a311-c7caea91bbb7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require(\"crypto\");\n\n// ============================\n// INPUTS\n// ============================\n\n// Private key stored in previous node / credentials / set node\nconst PRIVATE_KEY = $input.first().json.privateKey\n  .replace(/\\\\n/g, \"\\n\")\n  .trim();\n\n// Encrypted payload from Meta\nconst encrypted_aes_key = $('set_variable1').first().json.encrypted_aes_key;\nconst encrypted_flow_data = $('set_variable1').first().json.encrypted_flow_data;\nconst initial_vector = $('set_variable1').first().json.initial_vector;\n\n// ============================\n// 1. DECRYPT AES KEY (RSA)\n// ============================\nconst aesKeyBuffer = crypto.privateDecrypt(\n  {\n    key: crypto.createPrivateKey(PRIVATE_KEY),\n    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,\n    oaepHash: \"sha256\",\n  },\n  Buffer.from(encrypted_aes_key, \"base64\")\n);\n\n// ============================\n// 2. DECRYPT FLOW DATA (AES-128-GCM)\n// ============================\nconst flowDataBuffer = Buffer.from(encrypted_flow_data, \"base64\");\nconst ivBuffer = Buffer.from(initial_vector, \"base64\");\n\nconst TAG_LENGTH = 16;\nconst encryptedBody = flowDataBuffer.subarray(0, -TAG_LENGTH);\nconst authTag = flowDataBuffer.subarray(-TAG_LENGTH);\n\nconst decipher = crypto.createDecipheriv(\n  \"aes-128-gcm\",\n  aesKeyBuffer,\n  ivBuffer\n);\ndecipher.setAuthTag(authTag);\n\nconst decryptedBody = JSON.parse(\n  Buffer.concat([\n    decipher.update(encryptedBody),\n    decipher.final(),\n  ]).toString(\"utf-8\")\n);\n\n// ============================\n// OUTPUT FOR NEXT NODES\n// ============================\nreturn [\n  {\n    json: {\n      decryptedBody,      // Plain WhatsApp Flow JSON\n      aesKeyBuffer,       // Needed for encryption\n      ivBuffer,           // Needed for encryption\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        656
+      ],
+      "id": "8f8fce74-114e-4f0f-ac90-1c7b76e54970",
+      "name": "Decryption"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require(\"crypto\");\n\n// ============================\n// 1. RESPONSE PAYLOAD\n// ============================\nconst responsePayload = $input.first().json.response_to_send;\n\n// ============================\n// 2. REBUILD BUFFERS (IMPORTANT)\n// ============================\nconst aesKeyBuffer = Buffer.from($('Decryption').first().json.aesKeyBuffer.data);\nconst ivBuffer = Buffer.from($('Decryption').first().json.ivBuffer.data);\n\n// ============================\n// 3. FLIP IV (MANDATORY)\n// ============================\nconst flippedIV = Buffer.from(ivBuffer.map(b => ~b));\n\n// ============================\n// 4. ENCRYPT RESPONSE\n// ============================\nconst cipher = crypto.createCipheriv(\n  \"aes-128-gcm\",\n  aesKeyBuffer,\n  flippedIV\n);\n\nconst encryptedResponse = Buffer.concat([\n  cipher.update(JSON.stringify(responsePayload), \"utf-8\"),\n  cipher.final(),\n  cipher.getAuthTag(),\n]);\n\n// ============================\n// 5. RETURN BASE64 STRING\n// ============================\nreturn [\n  {\n    json: {\n      response: encryptedResponse.toString(\"base64\"),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        544
+      ],
+      "id": "132648c1-8efd-47c7-bbfa-7ba5d9e03d67",
+      "name": "Encryption"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "V6ljo9LKuMy4j8CI",
+          "mode": "list",
+          "cachedResultName": "Meta Sign in Keys",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/V6ljo9LKuMy4j8CI"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "2"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "publicKey": "={{ $('Code in JavaScript').item.json.publicKey }}",
+            "privateKey": "={{ $('Code in JavaScript').item.json.privateKey }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "publicKey",
+              "displayName": "publicKey",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "privateKey",
+              "displayName": "privateKey",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -256
+      ],
+      "id": "5393a32f-8a05-4405-b3a5-1318eeb6292b",
+      "name": "Set Public & Private Key"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "V6ljo9LKuMy4j8CI",
+          "mode": "list",
+          "cachedResultName": "Meta Sign in Keys",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/V6ljo9LKuMy4j8CI"
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        656
+      ],
+      "id": "e93bef2a-7058-4a72-b4b8-fa40c8a7132b",
+      "name": "Get Private Key"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require(\"crypto\");\n\n// ============================\n// 1. LOAD PRIVATE KEY\n// ============================\nconst PRIVATE_KEY = $input.first().json.privateKey\n  .replace(/\\\\n/g, \"\\n\")\n  .trim();\n\n// ============================\n// 2. READ META PAYLOAD\n// ============================\nconst encrypted_aes_key = $('set_variable1').first().json.encrypted_aes_key;\nconst encrypted_flow_data = $('set_variable1').first().json.encrypted_flow_data;\nconst initial_vector = $('set_variable1').first().json.initial_vector;\n\n// ============================\n// 3. DECRYPT AES KEY (RSA-OAEP-SHA256)\n// ============================\nconst aesKeyBuffer = crypto.privateDecrypt(\n  {\n    key: crypto.createPrivateKey(PRIVATE_KEY),\n    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,\n    oaepHash: \"sha256\",\n  },\n  Buffer.from(encrypted_aes_key, \"base64\")\n);\n\n// ============================\n// 4. DECRYPT REQUEST (VALIDATION ONLY)\n// ============================\nconst flowDataBuffer = Buffer.from(encrypted_flow_data, \"base64\");\nconst ivBuffer = Buffer.from(initial_vector, \"base64\");\n\nconst TAG_LENGTH = 16;\nconst encryptedBody = flowDataBuffer.subarray(0, -TAG_LENGTH);\nconst authTag = flowDataBuffer.subarray(-TAG_LENGTH);\n\nconst decipher = crypto.createDecipheriv(\n  \"aes-128-gcm\",\n  aesKeyBuffer,\n  ivBuffer\n);\ndecipher.setAuthTag(authTag);\n\n// We don’t need the decrypted data for health check,\n// but decryption must succeed\ndecipher.update(encryptedBody);\ndecipher.final();\n\n// ============================\n// 5. HEALTH CHECK RESPONSE PAYLOAD\n// ============================\nconst responsePayload = {\n  data: {\n    status: \"active\",\n  },\n};\n\n// ============================\n// 6. FLIP IV (MANDATORY)\n// ============================\nconst flippedIV = Buffer.from(ivBuffer.map(b => ~b));\n\n// ============================\n// 7. ENCRYPT RESPONSE\n// ============================\nconst cipher = crypto.createCipheriv(\n  \"aes-128-gcm\",\n  aesKeyBuffer,\n  flippedIV\n);\n\nconst encryptedResponse = Buffer.concat([\n  cipher.update(JSON.stringify(responsePayload), \"utf-8\"),\n  cipher.final(),\n  cipher.getAuthTag(),\n]);\n\n// ============================\n// 8. RETURN RAW BASE64 STRING\n// ============================\nreturn [\n  {\n    json: {\n      response: encryptedResponse.toString(\"base64\"),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        1152
+      ],
+      "id": "2cc33993-24fd-45e3-b88b-eb025f53e18d",
+      "name": "Encryption & Decryption in Single Code "
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.response }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2256,
+        544
+      ],
+      "id": "7d0811b7-5ff4-40cd-9fba-caecc49ddc97",
+      "name": "Response to Meta"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decryptedBody.action }}",
+                    "rightValue": "ping",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f3c1114e-81b5-41c3-a80c-a986bf16c144"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Health Check"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "375b85ac-66d3-4e85-bf8d-acb7541d24b8",
+                    "leftValue": "={{ $json.decryptedBody.action }}",
+                    "rightValue": "INIT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "INIT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a006f352-419c-41df-8b88-7e88c975f284",
+                    "leftValue": "={{ $json.decryptedBody.action }}",
+                    "rightValue": "submit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Submit"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "726f66a0-2a40-4614-bafe-9d8fe8241388",
+                    "leftValue": "={{ $json.decryptedBody.action }}",
+                    "rightValue": "data_exchange",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Data Exchange"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        624
+      ],
+      "id": "3d7cc321-94b6-40e5-83f1-68355f48eb4e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  data: {\n    status: \"active\",\n  },\n}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        -32
+      ],
+      "id": "9cac77d7-1d3b-4a4b-a91e-44009a9597ee",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"SIGN_IN\",\n  \"data\": {}\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        160
+      ],
+      "id": "e1739589-c18e-4421-a0c7-94bb7b6bfdf2",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decryptedBody.screen }}",
+                    "rightValue": "SIGN_IN",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4e16a13c-f435-459e-b8b8-76626417efc6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sign In"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5b37bb92-39de-4e4c-9542-a7dfe17176ab",
+                    "leftValue": "={{ $json.decryptedBody.screen }}",
+                    "rightValue": "SIGN_UP",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sign Up"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d37f8a31-f599-4add-9d79-27e7799bd7af",
+                    "leftValue": "={{ $json.decryptedBody.screen }}",
+                    "rightValue": "FORGOT_PASSWORD",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Forgot Password"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        720
+      ],
+      "id": "83edef15-21b0-497f-84bf-7f940af8a7d6",
+      "name": "Screen Routing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8cdaaee7-bbcc-4cb6-97ab-78b44d35a5c2",
+              "leftValue": "={{ $node['Get row(s)'].data.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1584,
+        544
+      ],
+      "id": "f3e76517-cbfe-4d16-a437-73537cbe574c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"SUCCESS\",\n  \"data\": {\n    \"message\": \"Login successful\"\n  }\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        544
+      ],
+      "id": "90f47e3a-2b31-4594-a76c-430b15a86f6e",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"SIGN_IN\",\n  \"data\": {\n    \"email\": \"{{ $('Screen Routing').item.json.decryptedBody.data.email }}\",\n    \"password\": \"{{ $('Screen Routing').item.json.decryptedBody.data.password }}\",\n    \"error_message\": \"Invalid email or password. Please try again.\"\n  }\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        352
+      ],
+      "id": "5edb893d-298c-4985-bf41-126b1b0b2ed5",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "5IP298aLxImtCr7M",
+          "mode": "list",
+          "cachedResultName": "Whatsapp Flow Testing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/5IP298aLxImtCr7M"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Screen Routing').item.json.decryptedBody.data.email }}",
+            "Password": "={{ $('Screen Routing').item.json.decryptedBody.data.password }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Password",
+              "displayName": "Password",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        736
+      ],
+      "id": "ac65b07c-5aad-43ae-865a-4976af2a0171",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0e925b4b-150a-449f-8b3e-acb6ae648897",
+              "leftValue": "={{ $('Screen Routing').item.json.decryptedBody.data.password }}",
+              "rightValue": "={{ $('Screen Routing').item.json.decryptedBody.data.confirm_password }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "f465a106-188f-4c52-9d86-9f20de586262",
+              "leftValue": "={{ $node['Get row(s)1'].data.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1392,
+        752
+      ],
+      "id": "465a7cfd-3a21-4ca2-be83-b8315bd4f707",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"SIGN_UP\",\n  \"data\": {\n    \"error_message\": \"Email Exist or password does not match. Please try again.\"\n  }\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        944
+      ],
+      "id": "7d07d8a7-4738-46a9-80ab-bb28545baf8f",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"TERMS_AND_CONDITIONS\",\n  \"data\": {\n    \"message\": \"User Created\"\n  }\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        736
+      ],
+      "id": "73857be5-9bd3-426c-91a8-4f7a9a9115b6",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "5IP298aLxImtCr7M",
+          "mode": "list",
+          "cachedResultName": "Whatsapp Flow Testing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/5IP298aLxImtCr7M"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Email",
+              "keyValue": "={{ $json.decryptedBody.data.email }}"
+            },
+            {
+              "keyName": "Password",
+              "keyValue": "={{ $json.decryptedBody.data.password }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        544
+      ],
+      "id": "d58098bd-c4d1-45d6-b4a7-818df5a30da4",
+      "name": "Get row(s)",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "5IP298aLxImtCr7M",
+          "mode": "list",
+          "cachedResultName": "Whatsapp Flow Testing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/5IP298aLxImtCr7M"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Email",
+              "keyValue": "={{ $json.decryptedBody.data.email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        752
+      ],
+      "id": "d6fa96dd-7a94-4ce3-bb96-85da31518f03",
+      "name": "Get row(s)1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "5IP298aLxImtCr7M",
+          "mode": "list",
+          "cachedResultName": "Whatsapp Flow Testing",
+          "cachedResultUrl": "/projects/iOyc3VpWKvgHH9fv/datatables/5IP298aLxImtCr7M"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Email",
+              "keyValue": "={{ $json.decryptedBody.data.email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        1072
+      ],
+      "id": "370ec3a4-30c6-4c3a-bacd-fde07d7c616a",
+      "name": "Get row(s)2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f465a106-188f-4c52-9d86-9f20de586262",
+              "leftValue": "={{ $node['Get row(s)2'].data.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1392,
+        1072
+      ],
+      "id": "e61fb775-bc4d-49fc-9c71-7d14f57231b1",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"SUCCESS\",\n  \"data\": {\n    \"message\": \"Email Send\"\n  }\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        1136
+      ],
+      "id": "5f8fa33d-7d09-4f5b-b335-c432f5011bc6",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08128ca4-7c59-4a3a-b137-e5eed4fabd45",
+              "name": "response_to_send",
+              "value": "={\n  \"screen\": \"SIGN_UP\",\n  \"data\": {\n    \"error_message\": \"Email Does not exist. Complete Sign Up\"\n  }\n}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        1296
+      ],
+      "id": "4c3a3536-c1cf-4f80-b6ae-578a5f8b2010",
+      "name": "Edit Fields7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "set_variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_variable": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "set_variable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send Normal Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Normal Message": {
+      "main": [
+        [
+          {
+            "node": "Set Public & Private Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_variable1": {
+      "main": [
+        [
+          {
+            "node": "Get Private Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decryption": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encryption": {
+      "main": [
+        [
+          {
+            "node": "Response to Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Private Key": {
+      "main": [
+        [
+          {
+            "node": "Decryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encryption & Decryption in Single Code ": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Screen Routing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Screen Routing": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Encryption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b8b9ec00-8c64-431b-aa40-8909078e6c15",
+  "meta": {
+    "instanceId": "d789f98abc61e86dff687f330128f36b18e064e2b032acf62c2a72dbb26457d3"
+  },
+  "id": "Pt59DPfSz29JUKow",
+  "tags": []
+}
